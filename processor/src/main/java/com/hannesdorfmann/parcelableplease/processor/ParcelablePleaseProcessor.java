@@ -94,12 +94,6 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
             continue;
           }
 
-          if (modifiers.contains(Modifier.FINAL)) {
-            ProcessorMessage.error(member,
-                "The field %s in %s is final. Final can not be Parcelable", element.getSimpleName(),
-                member.getSimpleName());
-          }
-
           if (modifiers.contains(Modifier.PRIVATE)) {
 
             if (ignorePrivateFields) {
@@ -113,6 +107,12 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
                     + "with @%s( ignorePrivateFields = true )", member.getSimpleName(),
                 element.getSimpleName(), NoThanks.class.getSimpleName(),
                 ParcelablePlease.class.getSimpleName());
+          }
+
+          if (modifiers.contains(Modifier.FINAL)) {
+            ProcessorMessage.error(member,
+                "The field %s in %s is final. Final can not be Parcelable", element.getSimpleName(),
+                member.getSimpleName());
           }
 
           // If we are here the field is be parcelable
