@@ -43,7 +43,6 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
 
   @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
 
-
     Element lastElement = null;
 
     for (Element element : env.getElementsAnnotatedWith(ParcelablePlease.class)) {
@@ -112,19 +111,16 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
         }
       }
 
-
       //
       // Generate the code
       //
 
-      if (!fields.isEmpty()) {
-        try {
-          CodeGenerator codeGenerator = new CodeGenerator();
-          codeGenerator.generate(filer,element, fields);
-        } catch (Exception e) {
-          e.printStackTrace();
-          ProcessorMessage.error(lastElement, "An error has occurred: %s", e.getMessage());
-        }
+      try {
+        CodeGenerator codeGenerator = new CodeGenerator(elementUtils, filer);
+        codeGenerator.generate((TypeElement) element, fields);
+      } catch (Exception e) {
+        e.printStackTrace();
+        ProcessorMessage.error(lastElement, "An error has occurred: %s", e.getMessage());
       }
     }
 

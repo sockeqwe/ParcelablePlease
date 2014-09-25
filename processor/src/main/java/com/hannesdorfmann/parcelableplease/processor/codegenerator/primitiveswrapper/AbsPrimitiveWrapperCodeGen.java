@@ -38,12 +38,13 @@ public class AbsPrimitiveWrapperCodeGen implements FieldCodeGen {
   @Override public void generateReadFromParcel(ParcelableField field, JavaWriter jw)
       throws IOException {
 
-    jw.emitStatement("boolean %sNullHelper = true", field.getFieldName());
+    jw.emitStatement("boolean %sNullHelper", field.getFieldName());
     jw.emitStatement("%sNullHelper = ( %s.readByte() == 1 )", field.getFieldName(),
         CodeGenerator.PARAM_PARCEL);
 
     jw.beginControlFlow("if (%sNullHelper)", field.getFieldName());
-    jw.emitStatement("%s.%s = read%s()", PARAM_TARGET, field.getFieldName(), methodSuffix);
+    jw.emitStatement("%s.%s = %s.read%s()", PARAM_TARGET, field.getFieldName(), PARAM_PARCEL,
+        methodSuffix);
     jw.nextControlFlow("else");
     jw.emitStatement("%s.%s = null", PARAM_TARGET, field.getFieldName());
     jw.endControlFlow();

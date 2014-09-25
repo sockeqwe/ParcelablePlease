@@ -2,6 +2,7 @@ package com.hannesdorfmann.parcelableplease.processor.codegenerator;
 
 import com.hannesdorfmann.annotationprocessing.TypeUtils;
 import com.hannesdorfmann.parcelableplease.annotation.Bagger;
+import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
 import com.hannesdorfmann.parcelableplease.processor.ParcelableField;
 import com.hannesdorfmann.parcelableplease.processor.ProcessorMessage;
 import com.hannesdorfmann.parcelableplease.processor.SupportedTypes;
@@ -10,7 +11,6 @@ import java.io.Writer;
 import java.util.EnumSet;
 import java.util.List;
 import javax.annotation.processing.Filer;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
@@ -41,22 +41,33 @@ public class CodeGenerator {
     this.elementUtils = elementUtils;
   }
 
-  public void generate(Element classElement, List<ParcelableField> fields) throws Exception {
+  public void generate(TypeElement classElement, List<ParcelableField> fields) throws Exception {
 
-    String packageName = TypeUtils.getPackageName(elementUtils, (TypeElement) classElement);
+    String classSuffix = "ParcelablePlease";
+    String packageName = TypeUtils.getPackageName(elementUtils, classElement);
     String originClass = classElement.getSimpleName().toString();
-    String className = originClass + "ParcelablePlease";
+    String className = originClass + classSuffix;
+    String qualifiedName = classElement.getQualifiedName().toString() + classSuffix;
 
-    JavaFileObject jfo = filer.createSourceFile(packageName, classElement);
+    //
+    // Write code
+    //
+
+    JavaFileObject jfo = filer.createSourceFile(qualifiedName, classElement);
     Writer writer = jfo.openWriter();
     JavaWriter jw = new JavaWriter(writer);
 
     jw.emitPackage(packageName);
-    jw.emitEmptyLine();
     jw.emitImports("android.os.Parcel");
+    jw.emitEmptyLine();
+    jw.emitJavadoc("Generated class by @%s . Do not modify this code!",
+        ParcelablePlease.class.getSimpleName());
     jw.beginType(className, "class", EnumSet.of(Modifier.PUBLIC));
+    jw.emitEmptyLine();
 
     generateWriteToParcel(jw, originClass, fields);
+    jw.emitEmptyLine();
+    generateReadFromParcel(jw, originClass, fields);
 
     jw.endType();
     jw.close();
@@ -64,16 +75,14 @@ public class CodeGenerator {
 
   /**
    * Generate the writeToParcel method
-   * @param jw
-   * @param originClass
-   * @param fields
+   *
    * @throws IOException
    */
   private void generateWriteToParcel(JavaWriter jw, String originClass,
       List<ParcelableField> fields) throws IOException {
 
-    jw.beginMethod("void", "writeToParcel", EnumSet.of(Modifier.PUBLIC), originClass, PARAM_SOURCE,
-        "Parcel", PARAM_PARCEL, "int", PARAM_FLAGS);
+    jw.beginMethod("void", "writeToParcel", EnumSet.of(Modifier.PUBLIC, Modifier.STATIC),
+        originClass, PARAM_SOURCE, "Parcel", PARAM_PARCEL, "int", PARAM_FLAGS);
 
     for (ParcelableField field : fields) {
       FieldCodeGen gen = SupportedTypes.getGenerator(field);
@@ -86,6 +95,28 @@ public class CodeGenerator {
       }
 
       gen.generateWriteToParcel(field, jw);
+    }
+
+    jw.endMethod();
+  }
+
+  private void generateReadFromParcel(JavaWriter jw, String originClass,
+      List<ParcelableField> fields) throws IOException {
+
+    jw.beginMethod("void", "readFromParcel", EnumSet.of(Modifier.PUBLIC, Modifier.STATIC),
+        originClass, PARAM_TARGET, "Parcel", PARAM_PARCEL);
+
+    for (ParcelableField field : fields) {
+      FieldCodeGen gen = SupportedTypes.getGenerator(field);
+
+      if (gen == null) {
+        ProcessorMessage.error(field.getElement(), "The field %s is not Parcelable. Use a @%s",
+            field.getFieldName(), Bagger.class.getSimpleName() + " to make it parcelable");
+
+        throw new IOException("Unparcelable Field " + field.getFieldName());
+      }
+
+      gen.generateReadFromParcel(field, jw);
     }
 
     jw.endMethod();

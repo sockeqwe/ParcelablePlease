@@ -30,7 +30,7 @@ public class BooleanWrapperCodeGen implements FieldCodeGen {
   @Override public void generateReadFromParcel(ParcelableField field, JavaWriter jw)
       throws IOException {
 
-    jw.emitStatement("boolean %sNullHelper = true", field.getFieldName());
+    jw.emitStatement("boolean %sNullHelper", field.getFieldName());
     jw.emitStatement("%sNullHelper = ( %s.readByte() == 1 )", field.getFieldName(),
         CodeGenerator.PARAM_PARCEL);
 

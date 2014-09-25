@@ -30,6 +30,6 @@ public class AbsPrimitiveCodeGen implements FieldCodeGen {
   @Override public void generateReadFromParcel(ParcelableField field, JavaWriter javaWriter)
       throws IOException {
 
-    javaWriter.emitStatement("%s.%s = read%s()", PARAM_TARGET, field.getFieldName(), methodSuffix);
+    javaWriter.emitStatement("%s.%s = %s.read%s()", PARAM_TARGET, field.getFieldName(), PARAM_PARCEL, methodSuffix);
   }
 }
