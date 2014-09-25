@@ -18,6 +18,12 @@
       <artifactId>annotation</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.hannesdorfmann</groupId>
+      <artifactId>annotationprocessing</artifactId>
+      <version>0.1.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
 
@@ -77,7 +83,6 @@
           </execution>
         </executions>
       </plugin>
-
 
 
       <plugin>

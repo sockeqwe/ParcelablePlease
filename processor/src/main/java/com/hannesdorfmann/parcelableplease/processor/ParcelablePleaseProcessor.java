@@ -3,6 +3,7 @@ package com.hannesdorfmann.parcelableplease.processor;
 import com.hannesdorfmann.parcelableplease.annotation.NoThanks;
 import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
 import com.hannesdorfmann.parcelableplease.annotation.ThisPlease;
+import com.hannesdorfmann.parcelableplease.processor.codegenerator.CodeGenerator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -42,16 +43,21 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
 
   @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
 
+
+    Element lastElement = null;
+
     for (Element element : env.getElementsAnnotatedWith(ParcelablePlease.class)) {
 
       if (!isClass(element)) {
         continue;
       }
 
+      List<ParcelableField> fields = new ArrayList<ParcelableField>();
+
+      lastElement = element;
+
       ParcelablePlease annotation = element.getAnnotation(ParcelablePlease.class);
       boolean allFields = annotation.allFields();
-
-      List<ParcelableField> fields = new ArrayList<ParcelableField>();
 
       List<? extends Element> memberFields = elementUtils.getAllMembers((TypeElement) element);
 
@@ -66,7 +72,6 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
           // it's a field, so go on
 
           NoThanks skipFieldAnnotation = member.getAnnotation(NoThanks.class);
-
           if (skipFieldAnnotation != null) {
             // Field is marked as not parcelabel, so continue with the next
             continue;
@@ -90,20 +95,35 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
           }
 
           if (modifiers.contains(Modifier.FINAL)) {
-            ProcessorMessage.error(member, "The field %s is final. Final can not be Parcelable",
+            ProcessorMessage.error(member,
+                "The field %s in %s is final. Final can not be Parcelable", element.getSimpleName(),
                 member.getSimpleName());
           }
 
           if (modifiers.contains(Modifier.PRIVATE)) {
             ProcessorMessage.error(member,
-                "The field %s is private. At least default package visibility is required "
+                "The field %s  in %s is private. At least default package visibility is required "
                     + "or annotate this field as not been parcelable with @%s",
-                member.getSimpleName(), NoThanks.class.getSimpleName());
+                member.getSimpleName(), element.getSimpleName(), NoThanks.class.getSimpleName());
           }
 
           // If we are here the field is be parcelable
-          ParcelableField field = new ParcelableField((VariableElement) member);
-          fields.add(field);
+          fields.add(new ParcelableField((VariableElement) member));
+        }
+      }
+
+
+      //
+      // Generate the code
+      //
+
+      if (!fields.isEmpty()) {
+        try {
+          CodeGenerator codeGenerator = new CodeGenerator();
+          codeGenerator.generate(filer,element, fields);
+        } catch (Exception e) {
+          e.printStackTrace();
+          ProcessorMessage.error(lastElement, "An error has occurred: %s", e.getMessage());
         }
       }
     }
