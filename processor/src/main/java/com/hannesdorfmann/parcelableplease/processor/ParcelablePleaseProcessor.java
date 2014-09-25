@@ -14,6 +14,7 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
@@ -52,17 +53,19 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
 
       List<ParcelableField> fields = new ArrayList<ParcelableField>();
 
-      if (element.getEnclosedElements() != null) {
-        for (Element enclosed : element.getEnclosedElements()) {
+      List<? extends Element> memberFields = elementUtils.getAllMembers((TypeElement) element);
+
+      if (memberFields != null) {
+        for (Element member : memberFields) {
           // Search for fields
 
-          if (enclosed.getKind() != ElementKind.FIELD && !(enclosed instanceof VariableElement)) {
+          if (member.getKind() != ElementKind.FIELD || !(member instanceof VariableElement)) {
             continue; // Not a field, so go on
           }
 
           // it's a field, so go on
 
-          NoThanks skipFieldAnnotation = enclosed.getAnnotation(NoThanks.class);
+          NoThanks skipFieldAnnotation = member.getAnnotation(NoThanks.class);
 
           if (skipFieldAnnotation != null) {
             // Field is marked as not parcelabel, so continue with the next
@@ -70,16 +73,36 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
           }
 
           if (!allFields) {
-            ThisPlease fieldAnnotated = enclosed.getAnnotation(ThisPlease.class);
+            ThisPlease fieldAnnotated = member.getAnnotation(ThisPlease.class);
             if (fieldAnnotated == null) {
               // Not all fields should parcelable,
-              // but this field is not annotated as make parcelable
+              // and this field is not annotated as parcelable, so skip this field
               continue;
             }
           }
 
-          // If we are here the field should be parcelable
-          ParcelableField field = new ParcelableField();
+          // Check the visibility of the field and modifiers
+          Set<Modifier> modifiers = member.getModifiers();
+
+          if (modifiers.contains(Modifier.STATIC)) {
+            // Static fields are skipped
+            continue;
+          }
+
+          if (modifiers.contains(Modifier.FINAL)) {
+            ProcessorMessage.error(member, "The field %s is final. Final can not be Parcelable",
+                member.getSimpleName());
+          }
+
+          if (modifiers.contains(Modifier.PRIVATE)) {
+            ProcessorMessage.error(member,
+                "The field %s is private. At least default package visibility is required "
+                    + "or annotate this field as not been parcelable with @%s",
+                member.getSimpleName(), NoThanks.class.getSimpleName());
+          }
+
+          // If we are here the field is be parcelable
+          ParcelableField field = new ParcelableField((VariableElement) member);
           fields.add(field);
         }
       }
