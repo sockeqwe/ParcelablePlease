@@ -57,6 +57,7 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
 
       ParcelablePlease annotation = element.getAnnotation(ParcelablePlease.class);
       boolean allFields = annotation.allFields();
+      boolean ignorePrivateFields = annotation.ignorePrivateFields();
 
       List<? extends Element> memberFields = elementUtils.getAllMembers((TypeElement) element);
 
@@ -100,10 +101,18 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
           }
 
           if (modifiers.contains(Modifier.PRIVATE)) {
+
+            if (ignorePrivateFields) {
+              continue;
+            }
+
             ProcessorMessage.error(member,
                 "The field %s  in %s is private. At least default package visibility is required "
-                    + "or annotate this field as not been parcelable with @%s",
-                member.getSimpleName(), element.getSimpleName(), NoThanks.class.getSimpleName());
+                    + "or annotate this field as not been parcelable with @%s "
+                    + "or configure this class to ignore private fields "
+                    + "with @%s( ignorePrivateFields = true )", member.getSimpleName(),
+                element.getSimpleName(), NoThanks.class.getSimpleName(),
+                ParcelablePlease.class.getSimpleName());
           }
 
           // If we are here the field is be parcelable
