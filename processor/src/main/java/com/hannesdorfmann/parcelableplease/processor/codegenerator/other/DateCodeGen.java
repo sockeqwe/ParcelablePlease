@@ -38,7 +38,7 @@ public class DateCodeGen implements FieldCodeGen {
 
     jw.beginControlFlow("if (%sNullHelper)", field.getFieldName());
     jw.emitStatement("long %sLongHelper = %s.readLong()", field.getFieldName(), PARAM_PARCEL);
-    jw.emitStatement("%s.%s = new Date(%sLongHelper)", PARAM_TARGET, field.getFieldName(),
+    jw.emitStatement("%s.%s = new java.util.Date(%sLongHelper)", PARAM_TARGET, field.getFieldName(),
         field.getFieldName());
     jw.nextControlFlow("else");
     jw.emitStatement("%s.%s = null", PARAM_TARGET, field.getFieldName());
