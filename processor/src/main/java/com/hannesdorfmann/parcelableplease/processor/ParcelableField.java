@@ -6,6 +6,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 
 /**
  * @author Hannes Dorfmann
@@ -16,11 +18,11 @@ public class ParcelableField {
   private String type;
   private Class<? extends ParcelableBagger> baggerClass;
   private Element element;
+  private String typeKey;
 
-  public ParcelableField(VariableElement element) {
+  public ParcelableField(VariableElement element, Elements elementUtils, Types typeUtils) {
 
     this.element = element;
-    element.asType();
 
     fieldName = element.getSimpleName().toString();
     type = element.asType().toString();
@@ -48,9 +50,9 @@ public class ParcelableField {
         ProcessorMessage.error(element, "The %s must provide a public empty default constructor",
             baggerClass.getSimpleName());
       }
-
-
     }
+
+    typeKey = SupportedTypes.getTypeKey(element, elementUtils, typeUtils);
   }
 
   public Element getElement() {
@@ -67,5 +69,9 @@ public class ParcelableField {
 
   public Class<? extends ParcelableBagger> getBaggerClass() {
     return baggerClass;
+  }
+
+  public String getTypeKey() {
+    return typeKey;
   }
 }

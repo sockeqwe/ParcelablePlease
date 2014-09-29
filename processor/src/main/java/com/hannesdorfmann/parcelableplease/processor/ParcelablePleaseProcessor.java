@@ -116,7 +116,7 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
           }
 
           // If we are here the field is be parcelable
-          fields.add(new ParcelableField((VariableElement) member));
+          fields.add(new ParcelableField((VariableElement) member, elementUtils, typeUtils));
         }
       }
 

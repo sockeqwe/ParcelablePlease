@@ -1,10 +1,11 @@
-package com.hannesdorfmann.parcelableplease.processor.codegenerator.primitives;
+package com.hannesdorfmann.parcelableplease.processor.codegenerator.other;
 
 import com.hannesdorfmann.parcelableplease.processor.ParcelableField;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.FieldCodeGen;
 import java.io.IOException;
 import repacked.com.squareup.javawriter.JavaWriter;
 
+import static com.hannesdorfmann.parcelableplease.processor.codegenerator.CodeGenerator.PARAM_FLAGS;
 import static com.hannesdorfmann.parcelableplease.processor.codegenerator.CodeGenerator.PARAM_PARCEL;
 import static com.hannesdorfmann.parcelableplease.processor.codegenerator.CodeGenerator.PARAM_SOURCE;
 import static com.hannesdorfmann.parcelableplease.processor.codegenerator.CodeGenerator.PARAM_TARGET;
@@ -12,24 +13,19 @@ import static com.hannesdorfmann.parcelableplease.processor.codegenerator.CodeGe
 /**
  * @author Hannes Dorfmann
  */
-public class AbsPrimitiveCodeGen implements FieldCodeGen {
-
-  private String methodSuffix;
-
-  public AbsPrimitiveCodeGen(String methodSuffix) {
-    this.methodSuffix = methodSuffix;
-  }
+public class ParcelableCodeGen implements FieldCodeGen {
 
   @Override public void generateWriteToParcel(ParcelableField field, JavaWriter javaWriter)
       throws IOException {
 
-    javaWriter.emitStatement("%s.write%s(%s.%s)", PARAM_PARCEL, methodSuffix, PARAM_SOURCE,
-        field.getFieldName());
+    javaWriter.emitStatement("%s.writeParcelable(%s.%s, %s)", PARAM_PARCEL, PARAM_SOURCE,
+        field.getFieldName(), PARAM_FLAGS);
   }
 
   @Override public void generateReadFromParcel(ParcelableField field, JavaWriter javaWriter)
       throws IOException {
 
-    javaWriter.emitStatement("%s.%s = %s.read%s()", PARAM_TARGET, field.getFieldName(), PARAM_PARCEL, methodSuffix);
+    javaWriter.emitStatement("%s.%s = %s.readParcelable(%s.class.getClassLoader())", PARAM_TARGET, field.getFieldName(),
+        PARAM_PARCEL, field.getType());
   }
 }

@@ -88,8 +88,10 @@ public class CodeGenerator {
       FieldCodeGen gen = SupportedTypes.getGenerator(field);
 
       if (gen == null) {
-        ProcessorMessage.error(field.getElement(), "The field %s is not Parcelable. Use a @%s",
-            field.getFieldName(), Bagger.class.getSimpleName() + " to make it parcelable");
+        ProcessorMessage.error(field.getElement(),
+            "The field %s is not Parcelable or of unsupported type. Use a @%s",
+            field.getFieldName(),
+            Bagger.class.getSimpleName() + " to provide your own serialisation mechanism");
 
         throw new IOException("Unparcelable Field " + field.getFieldName());
       }
@@ -110,8 +112,10 @@ public class CodeGenerator {
       FieldCodeGen gen = SupportedTypes.getGenerator(field);
 
       if (gen == null) {
-        ProcessorMessage.error(field.getElement(), "The field %s is not Parcelable. Use a @%s",
-            field.getFieldName(), Bagger.class.getSimpleName() + " to make it parcelable");
+        ProcessorMessage.error(field.getElement(),
+            "The field %s is not Parcelable or of unsupported type. Use a @%s",
+            field.getFieldName(),
+            Bagger.class.getSimpleName() + " to provide your own serialisation mechanism");
 
         throw new IOException("Unparcelable Field " + field.getFieldName());
       }
