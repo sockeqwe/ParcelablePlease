@@ -26,6 +26,15 @@ Work in progress
      - Parcelable (anything that implements Parcelable)
      - Bundle
  
+ - **Arrays**
+     - int[]
+     - long[]
+     - double[]
+     - String[]
+     - float[]
+     - char[]
+     - boolean[]
+     - byte[]
  
  - **Other**
     - Serializable
