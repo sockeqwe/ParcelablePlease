@@ -18,6 +18,7 @@ import javax.tools.JavaFileObject;
 import repacked.com.squareup.javawriter.JavaWriter;
 
 /**
+ * Generates the javacode for each field
  * @author Hannes Dorfmann
  */
 public class CodeGenerator {
@@ -85,9 +86,9 @@ public class CodeGenerator {
         originClass, PARAM_SOURCE, "Parcel", PARAM_PARCEL, "int", PARAM_FLAGS);
 
     for (ParcelableField field : fields) {
-      FieldCodeGen gen = SupportedTypes.getGenerator(field);
+      FieldCodeGen gen = field.getCodeGenerator();
 
-      if (gen == null) {
+      if (gen == null) { // Already checked before, but let's check it again
         ProcessorMessage.error(field.getElement(),
             "The field %s is not Parcelable or of unsupported type. Use a @%s",
             field.getFieldName(),
@@ -109,9 +110,9 @@ public class CodeGenerator {
         originClass, PARAM_TARGET, "Parcel", PARAM_PARCEL);
 
     for (ParcelableField field : fields) {
-      FieldCodeGen gen = SupportedTypes.getGenerator(field);
+      FieldCodeGen gen = field.getCodeGenerator();
 
-      if (gen == null) {
+      if (gen == null) { // Already checked before, but let's check it again
         ProcessorMessage.error(field.getElement(),
             "The field %s is not Parcelable or of unsupported type. Use a @%s",
             field.getFieldName(),

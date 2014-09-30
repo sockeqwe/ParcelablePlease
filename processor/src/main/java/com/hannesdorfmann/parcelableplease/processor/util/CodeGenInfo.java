@@ -1,10 +1,10 @@
 package com.hannesdorfmann.parcelableplease.processor.util;
 
-import com.hannesdorfmann.parcelableplease.processor.SupportedTypes;
+import com.hannesdorfmann.parcelableplease.processor.codegenerator.FieldCodeGen;
 import javax.lang.model.type.TypeMirror;
 
 /**
- * A simple class (compareable to a pair) that contains the typeKey (see {@link SupportedTypes} )
+ * A simple class (comparable to a pair) that contains the  (see {@link FieldCodeGen} )
  * and a TypeMirror for Generics Type for the same inspected element. Note that Generic Type key
  * can
  * be null, or in other words is only available if the inspected element uses generics like
@@ -12,22 +12,23 @@ import javax.lang.model.type.TypeMirror;
  *
  * @author Hannes Dorfmann
  */
-public class TypeKeyResult {
+public class CodeGenInfo {
 
-  private String typeKey;
   private TypeMirror genericsType;
 
-  public TypeKeyResult(String typeKey) {
-    this.typeKey = typeKey;
+  private FieldCodeGen generator;
+
+  public CodeGenInfo(FieldCodeGen generator) {
+    this.generator = generator;
   }
 
-  public TypeKeyResult(String typeKey, TypeMirror genericsType) {
-    this.typeKey = typeKey;
+  public CodeGenInfo(FieldCodeGen generator, TypeMirror genericsType) {
+    this.generator = generator;
     this.genericsType = genericsType;
   }
 
-  public String getTypeKey() {
-    return typeKey;
+  public FieldCodeGen getCodeGenerator() {
+    return generator;
   }
 
   public TypeMirror getGenericsType() {

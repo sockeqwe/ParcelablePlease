@@ -3,7 +3,8 @@ package com.hannesdorfmann.parcelableplease.processor;
 import com.hannesdorfmann.parcelableplease.ParcelableBagger;
 import com.hannesdorfmann.parcelableplease.annotation.Bagger;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.FieldCodeGen;
-import com.hannesdorfmann.parcelableplease.processor.util.TypeKeyResult;
+import com.hannesdorfmann.parcelableplease.processor.util.CodeGenInfo;
+import com.hannesdorfmann.parcelableplease.processor.util.UnsupportedTypeException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import javax.lang.model.element.Element;
@@ -23,7 +24,7 @@ public class ParcelableField {
   private String type;
   private Class<? extends ParcelableBagger> baggerClass;
   private Element element;
-  private String typeKey;
+  private FieldCodeGen codeGenerator;
   private TypeMirror genericsTypeArgument;
 
   public ParcelableField(VariableElement element, Elements elementUtils, Types typeUtils) {
@@ -56,21 +57,19 @@ public class ParcelableField {
             baggerClass.getSimpleName());
       }
     } else {
+      // Not using Bagger
+      CodeGenInfo res = SupportedTypes.getCodeGenInfo(element, elementUtils, typeUtils);
+      codeGenerator = res.getCodeGenerator();
+      genericsTypeArgument = res.getGenericsType();
 
       // Check if type is supported
-      TypeKeyResult res = SupportedTypes.getTypeKey(element, elementUtils, typeUtils);
-      typeKey = res.getTypeKey();
+      if (codeGenerator == null) {
+        ProcessorMessage.error(element,
+            "Unsupported type %s for field %s. You could use @%s to provide your own serialization mechanism",
+            element.asType().toString(), element.getSimpleName(), Bagger.class.getSimpleName());
 
-      FieldCodeGen gen = SupportedTypes.getGenerator(this);
-      if (gen == null) {
-        ProcessorMessage.error(getElement(),
-            "The field %s is not Parcelable or is of unsupported type. Use a @%s", getFieldName(),
-            Bagger.class.getSimpleName() + " to provide your own serialisation mechanism");
-
-        throw new IllegalArgumentException("Unparcelable Field " + getFieldName());
+        throw new UnsupportedTypeException("Unsupported type %s " + element.asType().toString());
       }
-
-      genericsTypeArgument = res.getGenericsType();
     }
   }
 
@@ -90,8 +89,8 @@ public class ParcelableField {
     return baggerClass;
   }
 
-  public String getTypeKey() {
-    return typeKey;
+  public FieldCodeGen getCodeGenerator() {
+    return codeGenerator;
   }
 
   public TypeMirror getGenericsTypeArgument() {

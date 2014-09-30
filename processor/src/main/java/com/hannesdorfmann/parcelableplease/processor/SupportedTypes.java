@@ -1,15 +1,18 @@
 package com.hannesdorfmann.parcelableplease.processor;
 
+import com.hannesdorfmann.parcelableplease.annotation.Bagger;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.AbsCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.FieldCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.AbsListCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.other.DateCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.other.ParcelableCodeGen;
+import com.hannesdorfmann.parcelableplease.processor.codegenerator.other.SerializeableCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.primitives.BooleanCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.primitiveswrapper.AbsPrimitiveWrapperCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.primitiveswrapper.BooleanWrapperCodeGen;
+import com.hannesdorfmann.parcelableplease.processor.util.CodeGenInfo;
 import com.hannesdorfmann.parcelableplease.processor.util.GenericsTypeArgmumentException;
-import com.hannesdorfmann.parcelableplease.processor.util.TypeKeyResult;
+import com.hannesdorfmann.parcelableplease.processor.util.UnsupportedTypeException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +40,11 @@ public class SupportedTypes {
   private static final String TYPE_KEY_PARCELABLE = "android.os.Parcelable";
 
   /**
+   * Used for something that extends / implements serializeable
+   */
+  private static final String TYPE_KEY_SERIALIZABLE = "java.io.Serializable";
+
+  /**
    * Used for arraylist of parcelables
    */
   private static final String TYPE_KEY_PARCELABLE_ARRAYLIST = "Parcelable-ArrayList";
@@ -50,7 +58,6 @@ public class SupportedTypes {
 
   private static final String TYPE_KEY_PARCELABLE_COPYONWRITEARRAYLIST =
       "Parcelable-CopyOnWriteArrayList";
-
 
   private static Map<String, FieldCodeGen> typeMap;
 
@@ -76,6 +83,7 @@ public class SupportedTypes {
 
     // Parcelable , Serializeable
     typeMap.put(TYPE_KEY_PARCELABLE, new ParcelableCodeGen());
+    typeMap.put(TYPE_KEY_SERIALIZABLE, new SerializeableCodeGen());
 
     // Lists
     typeMap.put(TYPE_KEY_PARCELABLE_LIST, new AbsListCodeGen(ArrayList.class.getName()));
@@ -86,56 +94,66 @@ public class SupportedTypes {
 
     // Other common classes
     typeMap.put(Date.class.getCanonicalName(), new DateCodeGen());
-
-
   }
 
   /**
-   * Get the field Code Generator for a certain field
-   *
-   * @return null if no Generator is available for the given field. That mens that that type of the
-   * field is not suppored by this library.
+   * Collect information about the element and the corresponding code generator
+   * @param element
+   * @param elements
+   * @param types
+   * @return
    */
-  public static FieldCodeGen getGenerator(ParcelableField field) {
-    return typeMap.get(field.getTypeKey());
-  }
-
-  /**
-   * The typekey is used as key for {@link #typeMap} to get the corresponding FieldCodeGen instance
-   */
-  public static TypeKeyResult getTypeKey(VariableElement element, Elements elements, Types types) {
+  public static CodeGenInfo getCodeGenInfo(VariableElement element, Elements elements,
+      Types types) {
 
     // Check if its a simple parcelable
     if (isOfType(element, "android.os.Parcelable", elements, types)) {
-      return new TypeKeyResult(TYPE_KEY_PARCELABLE);
+      return new CodeGenInfo(typeMap.get(TYPE_KEY_PARCELABLE));
     }
 
     // Lists
     if (isOfWildCardType(element, ArrayList.class.getName(), "android.os.Parcelable", elements,
         types)) {
 
-      return new TypeKeyResult(TYPE_KEY_PARCELABLE_ARRAYLIST,
+      return new CodeGenInfo(typeMap.get(TYPE_KEY_PARCELABLE_ARRAYLIST),
           hasGenericsTypeArgumentOf(element, "android.os.Parcelable", elements, types));
     }
 
     if (isOfWildCardType(element, LinkedList.class.getName(), "android.os.Parcelable", elements,
         types)) {
-      return new TypeKeyResult(TYPE_KEY_PARCELABLE_LINKEDLIST,
+      return new CodeGenInfo(typeMap.get(TYPE_KEY_PARCELABLE_LINKEDLIST),
           hasGenericsTypeArgumentOf(element, "android.os.Parcelable", elements, types));
     }
 
     if (isOfWildCardType(element, CopyOnWriteArrayList.class.getName(), "android.os.Parcelable",
         elements, types)) {
-      return new TypeKeyResult(TYPE_KEY_PARCELABLE_COPYONWRITEARRAYLIST,
+      return new CodeGenInfo(typeMap.get(TYPE_KEY_PARCELABLE_COPYONWRITEARRAYLIST),
           hasGenericsTypeArgumentOf(element, "android.os.Parcelable", elements, types));
     }
 
     if (isOfWildCardType(element, List.class.getName(), "android.os.Parcelable", elements, types)) {
-      return new TypeKeyResult(TYPE_KEY_PARCELABLE_LIST,
+      return new CodeGenInfo(typeMap.get(TYPE_KEY_PARCELABLE_LIST),
           hasGenericsTypeArgumentOf(element, "android.os.Parcelable", elements, types));
     }
 
-    return new TypeKeyResult(element.asType().toString());
+    // Everything else, like primitive, wrappers, etc.
+
+    String typeKey = element.asType().toString();
+    if (typeMap.get(typeKey) != null) {
+      return new CodeGenInfo(typeMap.get(typeKey));
+    }
+
+    // Serializable as last
+    if (isOfType(element, "java.io.Serializable", elements, types)) {
+      return new CodeGenInfo(typeMap.get(TYPE_KEY_SERIALIZABLE));
+    }
+
+    // Unsupported type
+    ProcessorMessage.error(element, "Unsuppored type %s for field %s. "
+            + "You could write your own Serialization mechanism by using @%s ",
+        element.asType().toString(), element.getSimpleName(), Bagger.class.getSimpleName());
+
+    throw new UnsupportedTypeException("The type " + element.asType().toString());
   }
 
   /**
