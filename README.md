@@ -5,7 +5,7 @@ Work in progress
 
 # Supported types:
 
- - *Primitives:*
+ - **Primitives:**
     - byte
     - boolean
     - double
@@ -14,7 +14,7 @@ Work in progress
     - long
     - String
     
- - *Primitive Wrappers:*
+ - **Primitive Wrappers:**
      - Byte
      - Boolean
      - Double
@@ -22,12 +22,16 @@ Work in progress
      - Int
      - Long
      
+ - Android specific:
+     - **Parcelable (anything that implements Parcelable)**
  
- - *Parcelable (anything that implements Parcelable)*
- - *java.util.Date* (by simpling passing time as millis) 
+ 
+ - **Other**
+    - Serializable
+    - java.util.Date (by simpling passing time as millis) 
  
  
- - *Collections*
+ - **Collections**
      - List<? extends Parcelalble>
      - ArrayList<? extends Parcelable>
      - LinkedList<? extends Parcelable>
