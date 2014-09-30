@@ -25,6 +25,7 @@ Work in progress
  - **Android specific**
      - Parcelable (anything that implements Parcelable)
      - Bundle
+     - SparseBooleanArray
  
  - **Arrays**
      - int[]

@@ -4,6 +4,7 @@ import com.hannesdorfmann.parcelableplease.annotation.Bagger;
 import com.hannesdorfmann.parcelableplease.processor.ProcessorMessage;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.android.BundleCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.android.ParcelableCodeGen;
+import com.hannesdorfmann.parcelableplease.processor.codegenerator.android.SparseBooleanCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.AbsListCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.ParcelableArrayCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.PrimitiveArrayCodeGen;
@@ -52,6 +53,8 @@ public class SupportedTypes {
   private static final String TYPE_KEY_LONG_ARRAY = "Array-Long";
   private static final String TYPE_KEY_STRING_ARRAY = "Array-String";
   private static final String TYPE_KEY_PARCELABLE_ARRAY = "Array-Parcelable";
+  private static final String TYPE_KEY_SPARSE_BOOLEAN_ARRAY = "android.util.SparseBooleanArray";
+  private static final String TYPE_KEY_SPARSE_ARRAY = "android.util.SparseArray";
 
   private static final String TYPE_KEY_PARCELABLE_COPYONWRITEARRAYLIST =
       "Parcelable-CopyOnWriteArrayList";
@@ -81,6 +84,8 @@ public class SupportedTypes {
     // Android
     typeMap.put(TYPE_KEY_PARCELABLE, new ParcelableCodeGen());
     typeMap.put(TYPE_KEY_BUNDLE, new BundleCodeGen());
+    typeMap.put(TYPE_KEY_SPARSE_BOOLEAN_ARRAY, new SparseBooleanCodeGen());
+    // typeMap.put(TYPE_KEY_SPARSE_ARRAY, new SparseArrayCodeGen()); // TODO implement
 
     // Lists
     typeMap.put(TYPE_KEY_PARCELABLE_LIST, new AbsListCodeGen(ArrayList.class.getName()));
@@ -197,6 +202,16 @@ public class SupportedTypes {
           element.asType().toString(), element.getSimpleName(), Bagger.class.getSimpleName());
     }
 
+
+    // TODO SparseArray
+    // if (isOfWildCardType(element, "android.util.SparseArray", "android.os.Parcelable", elements,
+    //     types)) {
+    //  return new CodeGenInfo(typeMap.get(TYPE_KEY_SPARSE_ARRAY),
+    //      hasGenericsTypeArgumentOf(element, null, elements, types));
+    // }
+
+
+
     // Serializable as last
     if (isOfType(element, "java.io.Serializable", elements, types)) {
       return new CodeGenInfo(typeMap.get(TYPE_KEY_SERIALIZABLE));
@@ -206,7 +221,8 @@ public class SupportedTypes {
     ProcessorMessage.error(element, "Unsuppored type %s for field %s. "
             + "You could write your own Serialization mechanism by using @%s ",
         element.asType().toString(), element.getSimpleName(), Bagger.class.getSimpleName());
-    return null;
+
+    return new CodeGenInfo(null);
   }
 
   /**
@@ -262,10 +278,12 @@ public class SupportedTypes {
     // Ok it has a generic argument, check if this extends Parcelable
     TypeMirror argument = typeArguments.get(0);
 
-    if (!isOfType(argument, typeToCheck, elements, types)) {
-      ProcessorMessage.error(element,
-          "The fields %s  generic type argument is not of type  %s! (in %s )",
-          element.getSimpleName(), typeToCheck, element.asType().toString());
+    if (typeToCheck != null) {
+      if (!isOfType(argument, typeToCheck, elements, types)) {
+        ProcessorMessage.error(element,
+            "The fields %s  generic type argument is not of type  %s! (in %s )",
+            element.getSimpleName(), typeToCheck, element.asType().toString());
+      }
     }
 
     // everything is like expected
