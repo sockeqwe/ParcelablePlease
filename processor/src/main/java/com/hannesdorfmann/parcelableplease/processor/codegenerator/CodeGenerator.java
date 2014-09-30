@@ -5,7 +5,6 @@ import com.hannesdorfmann.parcelableplease.annotation.Bagger;
 import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
 import com.hannesdorfmann.parcelableplease.processor.ParcelableField;
 import com.hannesdorfmann.parcelableplease.processor.ProcessorMessage;
-import com.hannesdorfmann.parcelableplease.processor.SupportedTypes;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.EnumSet;
@@ -19,6 +18,7 @@ import repacked.com.squareup.javawriter.JavaWriter;
 
 /**
  * Generates the javacode for each field
+ *
  * @author Hannes Dorfmann
  */
 public class CodeGenerator {
@@ -97,7 +97,9 @@ public class CodeGenerator {
         throw new IOException("Unparcelable Field " + field.getFieldName());
       }
 
+      jw.emitEmptyLine();
       gen.generateWriteToParcel(field, jw);
+      jw.emitEmptyLine();
     }
 
     jw.endMethod();
@@ -121,7 +123,9 @@ public class CodeGenerator {
         throw new IOException("Unparcelable Field " + field.getFieldName());
       }
 
+      jw.emitEmptyLine();
       gen.generateReadFromParcel(field, jw);
+      jw.emitEmptyLine();
     }
 
     jw.endMethod();

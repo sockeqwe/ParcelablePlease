@@ -13,7 +13,7 @@ import static com.hannesdorfmann.parcelableplease.processor.codegenerator.CodeGe
  */
 public class AbsCodeGen implements FieldCodeGen {
 
-  private String methodSuffix;
+  protected String methodSuffix;
 
   public AbsCodeGen(String methodSuffix) {
     this.methodSuffix = methodSuffix;
