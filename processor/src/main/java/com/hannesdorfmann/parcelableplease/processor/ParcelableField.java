@@ -5,7 +5,6 @@ import com.hannesdorfmann.parcelableplease.annotation.Bagger;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.FieldCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.SupportedTypes;
 import com.hannesdorfmann.parcelableplease.processor.util.CodeGenInfo;
-import com.hannesdorfmann.parcelableplease.processor.util.UnsupportedTypeException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import javax.lang.model.element.Element;
@@ -68,8 +67,6 @@ public class ParcelableField {
         ProcessorMessage.error(element,
             "Unsupported type %s for field %s. You could use @%s to provide your own serialization mechanism",
             element.asType().toString(), element.getSimpleName(), Bagger.class.getSimpleName());
-
-        throw new UnsupportedTypeException("Unsupported type %s " + element.asType().toString());
       }
     }
   }

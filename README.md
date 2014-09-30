@@ -35,6 +35,7 @@ Work in progress
      - char[]
      - boolean[]
      - byte[]
+     - Parcelable[] (array of anything that implements Parcelable)
  
  - **Other**
     - Serializable

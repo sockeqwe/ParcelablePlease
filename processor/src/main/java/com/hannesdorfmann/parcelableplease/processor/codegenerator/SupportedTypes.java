@@ -5,6 +5,7 @@ import com.hannesdorfmann.parcelableplease.processor.ProcessorMessage;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.android.BundleCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.android.ParcelableCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.AbsListCodeGen;
+import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.ParcelableArrayCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.PrimitiveArrayCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.other.DateCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.other.SerializeableCodeGen;
@@ -12,8 +13,6 @@ import com.hannesdorfmann.parcelableplease.processor.codegenerator.primitives.Bo
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.primitiveswrapper.AbsPrimitiveWrapperCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.primitiveswrapper.BooleanWrapperCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.util.CodeGenInfo;
-import com.hannesdorfmann.parcelableplease.processor.util.GenericsTypeArgmumentException;
-import com.hannesdorfmann.parcelableplease.processor.util.UnsupportedTypeException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +31,8 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 /**
+ * The supported types and the corresponding code generator classes
+ *
  * @author Hannes Dorfmann
  */
 public class SupportedTypes {
@@ -50,6 +51,7 @@ public class SupportedTypes {
   private static final String TYPE_KEY_CHAR_ARRAY = "Array-Char";
   private static final String TYPE_KEY_LONG_ARRAY = "Array-Long";
   private static final String TYPE_KEY_STRING_ARRAY = "Array-String";
+  private static final String TYPE_KEY_PARCELABLE_ARRAY = "Array-Parcelable";
 
   private static final String TYPE_KEY_PARCELABLE_COPYONWRITEARRAYLIST =
       "Parcelable-CopyOnWriteArrayList";
@@ -96,6 +98,7 @@ public class SupportedTypes {
     typeMap.put(TYPE_KEY_LONG_ARRAY, new PrimitiveArrayCodeGen("LongArray", "long"));
     typeMap.put(TYPE_KEY_INT_ARRAY, new PrimitiveArrayCodeGen("IntArray", "int"));
     typeMap.put(TYPE_KEY_STRING_ARRAY, new PrimitiveArrayCodeGen("StringArray", "String"));
+    typeMap.put(TYPE_KEY_PARCELABLE_ARRAY, new ParcelableArrayCodeGen());
 
     // Other common classes
     typeMap.put(TYPE_KEY_SERIALIZABLE, new SerializeableCodeGen());
@@ -179,9 +182,19 @@ public class SupportedTypes {
         return new CodeGenInfo(typeMap.get(TYPE_KEY_LONG_ARRAY));
       }
 
-      if (arrayOf.toString().equals(String.class.getName())){
+      if (arrayOf.toString().equals(String.class.getName())) {
         return new CodeGenInfo(typeMap.get(TYPE_KEY_STRING_ARRAY));
       }
+
+      if (isOfType(arrayOf, "android.os.Parcelable", elements, types)) {
+        // It's an array of parcelable
+        return new CodeGenInfo(typeMap.get(TYPE_KEY_PARCELABLE_ARRAY), arrayOf);
+      }
+
+      // Unsupported Array Type
+      ProcessorMessage.error(element, "Unsuppored type %s as Array type for field %s. "
+              + "You could write your own Serialization mechanism by using @%s ",
+          element.asType().toString(), element.getSimpleName(), Bagger.class.getSimpleName());
     }
 
     // Serializable as last
@@ -193,8 +206,7 @@ public class SupportedTypes {
     ProcessorMessage.error(element, "Unsuppored type %s for field %s. "
             + "You could write your own Serialization mechanism by using @%s ",
         element.asType().toString(), element.getSimpleName(), Bagger.class.getSimpleName());
-
-    throw new UnsupportedTypeException("The type " + element.asType().toString());
+    return null;
   }
 
   /**
@@ -232,9 +244,6 @@ public class SupportedTypes {
         || !(element.asType() instanceof DeclaredType)) {
       ProcessorMessage.error(element, "The field %s in %s doesn't have generic type arguments!",
           element.getSimpleName(), element.asType().toString());
-
-      throw new GenericsTypeArgmumentException(
-          "The field " + element.getSimpleName() + " doesn't have generic type arguments!");
     }
 
     DeclaredType declaredType = (DeclaredType) element.asType();
@@ -243,17 +252,11 @@ public class SupportedTypes {
     if (typeArguments.isEmpty()) {
       ProcessorMessage.error(element, "The field %s in %s doesn't have generic type arguments!",
           element.getSimpleName(), element.asType().toString());
-
-      throw new GenericsTypeArgmumentException(
-          "The field " + element.getSimpleName() + " doesn't have generic type arguments!");
     }
 
     if (typeArguments.size() > 1) {
       ProcessorMessage.error(element, "The field %s in %s has more than 1 generic type argument!",
           element.getSimpleName(), element.asType().toString());
-
-      throw new GenericsTypeArgmumentException(
-          "The field " + element.getSimpleName() + " has more than 1 generic type argument");
     }
 
     // Ok it has a generic argument, check if this extends Parcelable
@@ -263,11 +266,6 @@ public class SupportedTypes {
       ProcessorMessage.error(element,
           "The fields %s  generic type argument is not of type  %s! (in %s )",
           element.getSimpleName(), typeToCheck, element.asType().toString());
-
-      throw new GenericsTypeArgmumentException("The fields "
-          + element.getSimpleName()
-          + " generic type argument is not of type "
-          + typeToCheck);
     }
 
     // everything is like expected
