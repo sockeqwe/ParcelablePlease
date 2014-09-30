@@ -99,7 +99,6 @@ public class CodeGenerator {
 
       jw.emitEmptyLine();
       gen.generateWriteToParcel(field, jw);
-      jw.emitEmptyLine();
     }
 
     jw.endMethod();
@@ -125,7 +124,6 @@ public class CodeGenerator {
 
       jw.emitEmptyLine();
       gen.generateReadFromParcel(field, jw);
-      jw.emitEmptyLine();
     }
 
     jw.endMethod();

@@ -1,11 +1,11 @@
-package com.hannesdorfmann.parcelableplease.processor;
+package com.hannesdorfmann.parcelableplease.processor.codegenerator;
 
 import com.hannesdorfmann.parcelableplease.annotation.Bagger;
-import com.hannesdorfmann.parcelableplease.processor.codegenerator.AbsCodeGen;
-import com.hannesdorfmann.parcelableplease.processor.codegenerator.FieldCodeGen;
+import com.hannesdorfmann.parcelableplease.processor.ProcessorMessage;
+import com.hannesdorfmann.parcelableplease.processor.codegenerator.android.BundleCodeGen;
+import com.hannesdorfmann.parcelableplease.processor.codegenerator.android.ParcelableCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.AbsListCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.other.DateCodeGen;
-import com.hannesdorfmann.parcelableplease.processor.codegenerator.other.ParcelableCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.other.SerializeableCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.primitives.BooleanCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.primitiveswrapper.AbsPrimitiveWrapperCodeGen;
@@ -34,28 +34,12 @@ import javax.lang.model.util.Types;
  */
 public class SupportedTypes {
 
-  /**
-   * Used for something that extends / implements parcelable
-   */
   private static final String TYPE_KEY_PARCELABLE = "android.os.Parcelable";
-
-  /**
-   * Used for something that extends / implements serializeable
-   */
   private static final String TYPE_KEY_SERIALIZABLE = "java.io.Serializable";
-
-  /**
-   * Used for arraylist of parcelables
-   */
   private static final String TYPE_KEY_PARCELABLE_ARRAYLIST = "Parcelable-ArrayList";
-
-  /**
-   * Used for LinkedList of parcelables
-   */
   private static final String TYPE_KEY_PARCELABLE_LINKEDLIST = "Parcelable-LinkedList";
-
   private static final String TYPE_KEY_PARCELABLE_LIST = "Parcelable-List";
-
+  private static final String TYPE_KEY_BUNDLE = "android.os.Bundle";
   private static final String TYPE_KEY_PARCELABLE_COPYONWRITEARRAYLIST =
       "Parcelable-CopyOnWriteArrayList";
 
@@ -81,9 +65,9 @@ public class SupportedTypes {
     typeMap.put(Integer.class.getCanonicalName(), new AbsPrimitiveWrapperCodeGen("Int"));
     typeMap.put(Long.class.getCanonicalName(), new AbsPrimitiveWrapperCodeGen("Long"));
 
-    // Parcelable , Serializeable
+    // Android
     typeMap.put(TYPE_KEY_PARCELABLE, new ParcelableCodeGen());
-    typeMap.put(TYPE_KEY_SERIALIZABLE, new SerializeableCodeGen());
+    typeMap.put(TYPE_KEY_BUNDLE, new BundleCodeGen());
 
     // Lists
     typeMap.put(TYPE_KEY_PARCELABLE_LIST, new AbsListCodeGen(ArrayList.class.getName()));
@@ -93,18 +77,21 @@ public class SupportedTypes {
         new AbsListCodeGen(CopyOnWriteArrayList.class.getName()));
 
     // Other common classes
+    typeMap.put(TYPE_KEY_SERIALIZABLE, new SerializeableCodeGen());
     typeMap.put(Date.class.getCanonicalName(), new DateCodeGen());
   }
 
   /**
    * Collect information about the element and the corresponding code generator
-   * @param element
-   * @param elements
-   * @param types
-   * @return
    */
   public static CodeGenInfo getCodeGenInfo(VariableElement element, Elements elements,
       Types types) {
+
+    // Special classes, primitive, wrappers, etc.
+    String typeKey = element.asType().toString();
+    if (typeMap.get(typeKey) != null) {
+      return new CodeGenInfo(typeMap.get(typeKey));
+    }
 
     // Check if its a simple parcelable
     if (isOfType(element, "android.os.Parcelable", elements, types)) {
@@ -134,13 +121,6 @@ public class SupportedTypes {
     if (isOfWildCardType(element, List.class.getName(), "android.os.Parcelable", elements, types)) {
       return new CodeGenInfo(typeMap.get(TYPE_KEY_PARCELABLE_LIST),
           hasGenericsTypeArgumentOf(element, "android.os.Parcelable", elements, types));
-    }
-
-    // Everything else, like primitive, wrappers, etc.
-
-    String typeKey = element.asType().toString();
-    if (typeMap.get(typeKey) != null) {
-      return new CodeGenInfo(typeMap.get(typeKey));
     }
 
     // Serializable as last

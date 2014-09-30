@@ -3,6 +3,7 @@ package com.hannesdorfmann.parcelableplease.processor;
 import com.hannesdorfmann.parcelableplease.ParcelableBagger;
 import com.hannesdorfmann.parcelableplease.annotation.Bagger;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.FieldCodeGen;
+import com.hannesdorfmann.parcelableplease.processor.codegenerator.SupportedTypes;
 import com.hannesdorfmann.parcelableplease.processor.util.CodeGenInfo;
 import com.hannesdorfmann.parcelableplease.processor.util.UnsupportedTypeException;
 import java.lang.reflect.Constructor;

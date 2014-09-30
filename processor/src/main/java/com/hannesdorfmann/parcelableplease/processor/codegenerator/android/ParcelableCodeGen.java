@@ -1,4 +1,4 @@
-package com.hannesdorfmann.parcelableplease.processor.codegenerator.other;
+package com.hannesdorfmann.parcelableplease.processor.codegenerator.android;
 
 import com.hannesdorfmann.parcelableplease.processor.ParcelableField;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.FieldCodeGen;

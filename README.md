@@ -5,7 +5,7 @@ Work in progress
 
 # Supported types:
 
- - **Primitives:**
+ - **Primitives**
     - byte
     - boolean
     - double
@@ -14,7 +14,7 @@ Work in progress
     - long
     - String
     
- - **Primitive Wrappers:**
+ - **Primitive wrappers**
      - Byte
      - Boolean
      - Double
@@ -22,8 +22,9 @@ Work in progress
      - Int
      - Long
      
- - Android specific:
-     - **Parcelable (anything that implements Parcelable)**
+ - **Android specific**
+     - Parcelable (anything that implements Parcelable)
+     - Bundle
  
  
  - **Other**
