@@ -5,6 +5,7 @@ import com.hannesdorfmann.parcelableplease.processor.ProcessorMessage;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.android.BundleCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.android.ParcelableCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.AbsListCodeGen;
+import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.PrimitiveArrayCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.other.DateCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.other.SerializeableCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.primitives.BooleanCodeGen;
@@ -23,6 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
@@ -40,6 +42,15 @@ public class SupportedTypes {
   private static final String TYPE_KEY_PARCELABLE_LINKEDLIST = "Parcelable-LinkedList";
   private static final String TYPE_KEY_PARCELABLE_LIST = "Parcelable-List";
   private static final String TYPE_KEY_BUNDLE = "android.os.Bundle";
+  private static final String TYPE_KEY_DOUBLE_ARRAY = "Array-Double";
+  private static final String TYPE_KEY_FLOAT_ARRAY = "Array-Float";
+  private static final String TYPE_KEY_INT_ARRAY = "Array-Int";
+  private static final String TYPE_KEY_BOOL_ARRAY = "Array-Boolean";
+  private static final String TYPE_KEY_BYTE_ARRAY = "Array-Byte";
+  private static final String TYPE_KEY_CHAR_ARRAY = "Array-Char";
+  private static final String TYPE_KEY_LONG_ARRAY = "Array-Long";
+  private static final String TYPE_KEY_STRING_ARRAY = "Array-String";
+
   private static final String TYPE_KEY_PARCELABLE_COPYONWRITEARRAYLIST =
       "Parcelable-CopyOnWriteArrayList";
 
@@ -75,6 +86,16 @@ public class SupportedTypes {
     typeMap.put(TYPE_KEY_PARCELABLE_LINKEDLIST, new AbsListCodeGen(LinkedList.class.getName()));
     typeMap.put(TYPE_KEY_PARCELABLE_COPYONWRITEARRAYLIST,
         new AbsListCodeGen(CopyOnWriteArrayList.class.getName()));
+
+    // Arrays
+    typeMap.put(TYPE_KEY_BOOL_ARRAY, new PrimitiveArrayCodeGen("BooleanArray", "boolean"));
+    typeMap.put(TYPE_KEY_BYTE_ARRAY, new PrimitiveArrayCodeGen("ByteArray", "byte"));
+    typeMap.put(TYPE_KEY_CHAR_ARRAY, new PrimitiveArrayCodeGen("CharArray", "char"));
+    typeMap.put(TYPE_KEY_DOUBLE_ARRAY, new PrimitiveArrayCodeGen("DoubleArray", "double"));
+    typeMap.put(TYPE_KEY_FLOAT_ARRAY, new PrimitiveArrayCodeGen("FloatArray", "float"));
+    typeMap.put(TYPE_KEY_LONG_ARRAY, new PrimitiveArrayCodeGen("LongArray", "long"));
+    typeMap.put(TYPE_KEY_INT_ARRAY, new PrimitiveArrayCodeGen("IntArray", "int"));
+    typeMap.put(TYPE_KEY_STRING_ARRAY, new PrimitiveArrayCodeGen("StringArray", "String"));
 
     // Other common classes
     typeMap.put(TYPE_KEY_SERIALIZABLE, new SerializeableCodeGen());
@@ -121,6 +142,46 @@ public class SupportedTypes {
     if (isOfWildCardType(element, List.class.getName(), "android.os.Parcelable", elements, types)) {
       return new CodeGenInfo(typeMap.get(TYPE_KEY_PARCELABLE_LIST),
           hasGenericsTypeArgumentOf(element, "android.os.Parcelable", elements, types));
+    }
+
+    // Arrays
+    if (element.asType().getKind() == TypeKind.ARRAY) {
+
+      ArrayType arrayType = (ArrayType) element.asType();
+
+      TypeMirror arrayOf = arrayType.getComponentType();
+
+      if (arrayOf.getKind() == TypeKind.CHAR) {
+        return new CodeGenInfo(typeMap.get(TYPE_KEY_CHAR_ARRAY));
+      }
+
+      if (arrayOf.getKind() == TypeKind.BOOLEAN) {
+        return new CodeGenInfo(typeMap.get(TYPE_KEY_BOOL_ARRAY));
+      }
+
+      if (arrayOf.getKind() == TypeKind.BYTE) {
+        return new CodeGenInfo(typeMap.get(TYPE_KEY_BYTE_ARRAY));
+      }
+
+      if (arrayOf.getKind() == TypeKind.DOUBLE) {
+        return new CodeGenInfo(typeMap.get(TYPE_KEY_DOUBLE_ARRAY));
+      }
+
+      if (arrayOf.getKind() == TypeKind.FLOAT) {
+        return new CodeGenInfo(typeMap.get(TYPE_KEY_FLOAT_ARRAY));
+      }
+
+      if (arrayOf.getKind() == TypeKind.INT) {
+        return new CodeGenInfo(typeMap.get(TYPE_KEY_INT_ARRAY));
+      }
+
+      if (arrayOf.getKind() == TypeKind.LONG) {
+        return new CodeGenInfo(typeMap.get(TYPE_KEY_LONG_ARRAY));
+      }
+
+      if (arrayOf.toString().equals(String.class.getName())){
+        return new CodeGenInfo(typeMap.get(TYPE_KEY_STRING_ARRAY));
+      }
     }
 
     // Serializable as last
