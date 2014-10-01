@@ -177,7 +177,7 @@ You can configure which fields should be serialized. There are two ways:
  ```
  
 
-As default `ParcelablePlase` will throw a compile error if it tries to serialize private fields (private fields are not supported because of visibility issues). If your class marked with `@ParcelablePlease` contains private fields you could mark them as not pacelable with `@ParcelableNoThanks` or you could cofigure ParcelablePlease to skip private fields by using `@ParcelablePlease( ignorePrivateFields = true)`:
+As default `ParcelablePlease` will throw a compile error if it tries to serialize private fields (private fields are not supported because of visibility issues). If your class marked with `@ParcelablePlease` contains private fields you could mark them as not pacelable with `@ParcelableNoThanks` or you could cofigure ParcelablePlease to skip private fields by using `@ParcelablePlease( ignorePrivateFields = true)`:
  
  ```java
  @ParcelablePlease( ignorePrivateFields = true)
