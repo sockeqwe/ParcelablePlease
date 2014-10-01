@@ -47,6 +47,7 @@ public class CodeGenerator {
     String classSuffix = "ParcelablePlease";
     String packageName = TypeUtils.getPackageName(elementUtils, classElement);
     String originClass = classElement.getSimpleName().toString();
+    String originFullQualifiedName = classElement.getQualifiedName().toString();
     String className = originClass + classSuffix;
     String qualifiedName = classElement.getQualifiedName().toString() + classSuffix;
 
@@ -66,9 +67,9 @@ public class CodeGenerator {
     jw.beginType(className, "class", EnumSet.of(Modifier.PUBLIC));
     jw.emitEmptyLine();
 
-    generateWriteToParcel(jw, originClass, fields);
+    generateWriteToParcel(jw, originFullQualifiedName, fields);
     jw.emitEmptyLine();
-    generateReadFromParcel(jw, originClass, fields);
+    generateReadFromParcel(jw, originFullQualifiedName, fields);
 
     jw.endType();
     jw.close();

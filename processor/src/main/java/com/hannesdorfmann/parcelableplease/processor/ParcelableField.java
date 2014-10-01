@@ -26,6 +26,7 @@ public class ParcelableField {
   private Element element;
   private FieldCodeGen codeGenerator;
   private TypeMirror genericsTypeArgument;
+  private String importQualifiedType;
 
   public ParcelableField(VariableElement element, Elements elementUtils, Types typeUtils) {
 

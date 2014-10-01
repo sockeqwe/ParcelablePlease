@@ -48,3 +48,9 @@ Work in progress
      - ArrayList<? extends Parcelable>
      - LinkedList<? extends Parcelable>
      - CopyOnWriteArrayList<? extends Parcelable>
+     
+     
+     
+# Limitations
+ - **Fields** must have at least default (package) visibility. That means private or protected fields are not supported.
+ - **Private classes** are not supported because of visibilitiy issues.

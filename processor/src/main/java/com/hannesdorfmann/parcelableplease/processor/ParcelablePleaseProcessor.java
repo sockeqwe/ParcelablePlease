@@ -145,7 +145,26 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
    */
   private boolean isClass(Element element) {
     if (element.getKind() == ElementKind.CLASS) {
+
+      if (element.getModifiers().contains(Modifier.ABSTRACT)) {
+        ProcessorMessage.error(element,
+            "Element %s is annotated with @%s but is an abstract class. "
+                + "Abstract classes can not be annotated. Annotate the concrete class "
+                + "that implements all abstract methods with @%s", element.getSimpleName(),
+            ParcelablePlease.class.getSimpleName(), ParcelablePlease.class.getSimpleName());
+        return false;
+      }
+
+      if (element.getModifiers().contains(Modifier.PRIVATE)) {
+        ProcessorMessage.error(element, "The private class %s is annotated with @%s. "
+                + "Private classes are not supported because of lacking visibility.",
+            element.getSimpleName(), ParcelablePlease.class.getSimpleName());
+        return false;
+      }
+
+      // Ok, its a valid class
       return true;
+
     } else {
       ProcessorMessage.error(element,
           "Element %s is annotated with @%s but is not a class. Only Classes are supported",
