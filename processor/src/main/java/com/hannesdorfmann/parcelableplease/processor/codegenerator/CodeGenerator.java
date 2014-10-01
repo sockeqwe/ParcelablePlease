@@ -1,10 +1,10 @@
 package com.hannesdorfmann.parcelableplease.processor.codegenerator;
 
-import com.hannesdorfmann.annotationprocessing.TypeUtils;
 import com.hannesdorfmann.parcelableplease.annotation.Bagger;
 import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
 import com.hannesdorfmann.parcelableplease.processor.ParcelableField;
 import com.hannesdorfmann.parcelableplease.processor.ProcessorMessage;
+import com.hannesdorfmann.parcelableplease.processor.util.TypeUtils;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.EnumSet;
