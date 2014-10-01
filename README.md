@@ -13,7 +13,7 @@ In android studio you need to apply Hugo Visser's awesome [android-apt](https://
 
 #How to use
 
-Simply annotate the classes you want to make Parcelable with `@ParcelablePlease` and implement the `Parcelable` as well as the `CREATOR` (This step can be automated by using the IntelliJ / Android Studio plugin, see below).
+Simply annotate the classes you want to make Parcelable with `@ParcelablePlease` and implement the `Parcelable` as well as the `CREATOR` (This step can be automated by using the Android Studio plugin, see below).
 
 ```java
 @ParcelablePlease
@@ -45,7 +45,7 @@ public class Model implements Parcelable {
 }
 
 ```
-The `ParcelablePlease` annotation processor will generate a class named `ClassName + ParcelablePlease` for you with all the code for writing and reading data in the Parcel.  So form the example above: `ModelParcelablePlease` is generated and provides two static methods: `ModelParcelablePlease.readFromParcel(Model, Parcel)` and `ModelParcelablePlease.writeToParcel(Model, Parcel, int)`
+The `ParcelablePlease` annotation processor will generate a class named `ClassName + ParcelablePlease` for you with all the code for writing and reading data in the Parcel.  So from the example above: `ModelParcelablePlease` is generated and provides two static methods: `ModelParcelablePlease.readFromParcel(Model, Parcel)` and `ModelParcelablePlease.writeToParcel(Model, Parcel, int)`
 
 Once you have done this basic setup by connecting the generated code with your Model class you can change the model class, add fields, remove fields etc. without worring about `Parcelable` because `ParcelablePlease` will generate the code for you everytime you compile.
 
@@ -56,7 +56,7 @@ Like mentioned above you have to write few lines of code to connect the Parcelab
  2. Open Android Studio / IntelliJ 
  3. Open the Preferences (on Mac with `⌘ + ;` )
  4. Type in the searchbox "plugin" to navigate quickly to the plugins section
- 5. Click on the `Intall Plugin From Disk` Button and select the downloaded plugin .jar file (Step 1)
+ 5. Click on the `Intall Plugin From Disk` Button and select the downloaded plugin .jar file
  
  ![Preferences](https://github.com/sockeqwe/ParcelablePlease/raw/master/ParcelablePlease-intellij-plugin/images/intellij-plugin.png "Preferences")
 
@@ -117,7 +117,7 @@ Like mentioned above you have to write few lines of code to connect the Parcelab
      
      
 # Bagger
-Do you want to make a field Parcelable but it's not listed in the supported types list from above (i.e. `java.util.Map` etc.)? No Problem: You can provide your own implementation implementing a `ParcelBagger` like this:
+Do you want to make a field Parcelable but it's not listed in the supported types list from above (i.e. `java.util.Map`)? No Problem: You can provide your own implementation implementing a `ParcelBagger` like this:
 ```java
 public class DateBagger implements ParcelBagger<Date> {
 
@@ -141,7 +141,8 @@ public class DateBagger implements ParcelBagger<Date> {
 }
 ```
 
-Now you can create a class like this:
+You can use your ParcelBagger with the `@Bagger` annotation like this:
+
 ```java
 @ParcelablePlease
 public class Person implements Parcelable {
@@ -161,8 +162,8 @@ Remember that you have to take care about special cases like what if the value i
 
 # Configuration
 You can configure which fields should be serialized. There are two ways:
- 1. As default settings all class (and super classes) fields will be serialized. You can mark field's you don't want to serialize by annotating them with `@ParcelableNoThanks`
- 2. You can do the other way: You could change the settings to only serialize fields that are marked with `@ ParcelableThisPlease ` like this:
+ 1. As default all class (and super classes) fields will be serialized. You can mark field's you don't want to serialize by annotating them with `@ParcelableNoThanks`
+ 2. You can do the other way: You could change the settings to only serialize fields that are marked with `@ParcelableThisPlease ` like this:
  ```java
  @ParcelablePlease( allFields = false)
  public class Animal implements Parcelable {
@@ -175,7 +176,8 @@ You can configure which fields should be serialized. There are two ways:
  }
  ```
  
- As default `ParcelablePlase` will throw a compile error if it tries to serialize private fields (private fields are not supported because of visibility issues). So if your class contains private fields you could mark them as not pacelable with `@ParcelableNoThanks` or you could cofigure ParcelablePlease to skip private fields by using `@ParcelablePlease( ignorePrivateFields = true)`:
+
+As default `ParcelablePlase` will throw a compile error if it tries to serialize private fields (private fields are not supported because of visibility issues). If your class marked with `@ParcelablePlease` contains private fields you could mark them as not pacelable with `@ParcelableNoThanks` or you could cofigure ParcelablePlease to skip private fields by using `@ParcelablePlease( ignorePrivateFields = true)`:
  
  ```java
  @ParcelablePlease( ignorePrivateFields = true)
