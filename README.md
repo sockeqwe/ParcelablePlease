@@ -157,7 +157,7 @@ public class Person implements Parcelable {
 ```
 
 Remember that you have to take care about special cases like what if the value is null.
-**Note** that `java.util.Date` is already supported by `ParcelablePlease`. The example above is just to get you an idea of how a implementation could look like.
+**Note** that `java.util.Date` is already supported by `ParcelablePlease`. The example above is just to give you an idea of how a implementation could look like.
 
 
 # Configuration
