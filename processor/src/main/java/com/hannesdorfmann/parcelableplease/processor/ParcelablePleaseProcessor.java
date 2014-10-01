@@ -3,8 +3,12 @@ package com.hannesdorfmann.parcelableplease.processor;
 import com.hannesdorfmann.parcelableplease.annotation.NoThanks;
 import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
 import com.hannesdorfmann.parcelableplease.annotation.ThisPlease;
+import com.hannesdorfmann.parcelableplease.processor.codegenerator.BaggerCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.CodeGenerator;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
@@ -20,12 +24,16 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import javax.tools.JavaFileObject;
+import repacked.com.squareup.javawriter.JavaWriter;
 
 /**
  * @author Hannes Dorfmann
  */
 @SupportedAnnotationTypes("com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease")
 public class ParcelablePleaseProcessor extends AbstractProcessor {
+
+  private static boolean BAGGERS_CREATED = false;
 
   private Elements elementUtils;
   private Types typeUtils;
@@ -44,6 +52,7 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
   @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
 
     Element lastElement = null;
+    CodeGenerator codeGenerator = new CodeGenerator(elementUtils, filer);
 
     for (Element element : env.getElementsAnnotatedWith(ParcelablePlease.class)) {
 
@@ -125,15 +134,27 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
       //
 
       try {
-        CodeGenerator codeGenerator = new CodeGenerator(elementUtils, filer);
         codeGenerator.generate((TypeElement) element, fields);
       } catch (Exception e) {
         e.printStackTrace();
-        ProcessorMessage.error(lastElement, "An error has occurred: %s", e.getMessage());
+        ProcessorMessage.error(lastElement, "An error has occurred while processing %s : %s",
+            element.getSimpleName(), e.getMessage());
       }
     }
 
-    return false;
+    //
+    // Generate baggers code
+    //
+    // Baggers are used, so generate mapping class
+    try {
+      generateBaggersMappingClass(lastElement);
+    } catch (IOException e) {
+      e.printStackTrace();
+      ProcessorMessage.error(lastElement,
+          "An error has occurred while generating Baggers class: %s", e.getMessage());
+    }
+
+    return true;
   }
 
   @Override public SourceVersion getSupportedSourceVersion() {
@@ -164,12 +185,57 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
 
       // Ok, its a valid class
       return true;
-
     } else {
       ProcessorMessage.error(element,
           "Element %s is annotated with @%s but is not a class. Only Classes are supported",
           element.getSimpleName(), ParcelablePlease.class.getSimpleName());
       return false;
     }
+  }
+
+  /**
+   * Generates a file
+   *
+   * @throws IOException
+   */
+  private void generateBaggersMappingClass(Element lastElement) throws IOException {
+
+    if (BAGGERS_CREATED) {
+      return;
+    }
+
+    JavaFileObject jfo = filer.createSourceFile(BaggerCodeGen.BAGGERS_QUALIFIED_NAME, lastElement);
+    Writer writer = jfo.openWriter();
+    JavaWriter jw = new JavaWriter(writer);
+
+    jw.emitPackage(BaggerCodeGen.BAGGERS_PACKAGE);
+
+    jw.emitEmptyLine();
+    jw.emitJavadoc("Generated class by @%s . Do not modify this code!",
+        ParcelablePlease.class.getSimpleName());
+
+    jw.beginType(BaggerCodeGen.BAGGERS_CLASS_NAME, "class", EnumSet.of(Modifier.PUBLIC));
+    jw.emitEmptyLine();
+
+    Set<Modifier> modifiers = EnumSet.of(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL);
+    // Fields
+    for (String c : BaggerCodeGen.usedBaggers) {
+
+      jw.emitEmptyLine();
+
+      jw.emitField(c, BaggerCodeGen.classToFieldName(c), modifiers, "new " + c + "()");
+    }
+
+    jw.emitEmptyLine();
+    jw.emitEmptyLine();
+
+    // Empty constructor
+    jw.beginConstructor(EnumSet.of(Modifier.PRIVATE));
+    jw.endConstructor();
+
+    jw.endType();
+    jw.close();
+
+    BAGGERS_CREATED = true;
   }
 }

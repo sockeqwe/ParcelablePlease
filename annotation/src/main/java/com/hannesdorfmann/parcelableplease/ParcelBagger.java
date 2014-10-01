@@ -7,7 +7,7 @@ import android.os.Parcel;
  *
  * @author Hannes Dorfmann
  */
-public interface ParcelableBagger<T> {
+public interface ParcelBagger<T> {
 
   /**
    * Write the value into the parcelable
