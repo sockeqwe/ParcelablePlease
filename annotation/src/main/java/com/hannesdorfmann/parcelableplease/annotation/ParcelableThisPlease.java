@@ -7,10 +7,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotate fields not to be parcelable (transient)
- *
+ * Annotate fields with that if you don't want to use all
  * @author Hannes Dorfmann
  */
 @Target(ElementType.FIELD) @Retention(RetentionPolicy.CLASS) @Documented
-public @interface NoThanks {
+public @interface ParcelableThisPlease {
 }

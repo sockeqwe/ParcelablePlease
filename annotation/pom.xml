@@ -5,12 +5,13 @@
   <parent>
     <artifactId>parent</artifactId>
     <groupId>com.hannesdorfmann.parcelableplease</groupId>
-    <version>0.1.46-SNAPSHOT</version>
+    <version>1.0.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>annotation</artifactId>
 
+  <name>ParcelablePlease Annotations</name>
 
   <dependencies>
     <dependency>

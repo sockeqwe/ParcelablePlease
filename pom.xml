@@ -4,10 +4,39 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
   <groupId>com.hannesdorfmann.parcelableplease</groupId>
   <artifactId>parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.46-SNAPSHOT</version>
+  <version>1.0.0</version>
+
+  <name>ParcelablePlease Parent</name>
+  <description>Generates Android Parcelable code</description>
+  <url>https://github.com/sockeqwe/ParcelablePlease</url>
+
+  <issueManagement>
+    <system>GitHub Issues</system>
+    <url>http://github.com/sockeqwe/ParcelablePlease/issues</url>
+  </issueManagement>
+
+  <licenses>
+    <license>
+      <name>Apache 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <organization>
+    <name>Hannes Dorfmann</name>
+    <url>http://www.hannesdorfmann.com</url>
+  </organization>
+
+
   <modules>
     <module>annotation</module>
     <module>processor</module>
@@ -38,24 +67,6 @@
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
-
-
-  <issueManagement>
-    <system>GitHub Issues</system>
-    <url>http://github.com/sockeqwe/ParcelablePlease/issues</url>
-  </issueManagement>
-
-  <licenses>
-    <license>
-      <name>Apache 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-    </license>
-  </licenses>
-
-  <organization>
-    <name>Hannes Dorfmann</name>
-    <url>http://www.hannesdorfmann.com</url>
-  </organization>
 
 
   <dependencyManagement>

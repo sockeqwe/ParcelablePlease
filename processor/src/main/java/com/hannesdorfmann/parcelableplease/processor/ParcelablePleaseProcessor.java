@@ -1,8 +1,8 @@
 package com.hannesdorfmann.parcelableplease.processor;
 
-import com.hannesdorfmann.parcelableplease.annotation.NoThanks;
+import com.hannesdorfmann.parcelableplease.annotation.ParcelableNoThanks;
 import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
-import com.hannesdorfmann.parcelableplease.annotation.ThisPlease;
+import com.hannesdorfmann.parcelableplease.annotation.ParcelableThisPlease;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.BaggerCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.CodeGenerator;
 import java.io.IOException;
@@ -80,14 +80,14 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
 
           // it's a field, so go on
 
-          NoThanks skipFieldAnnotation = member.getAnnotation(NoThanks.class);
+          ParcelableNoThanks skipFieldAnnotation = member.getAnnotation(ParcelableNoThanks.class);
           if (skipFieldAnnotation != null) {
             // Field is marked as not parcelabel, so continue with the next
             continue;
           }
 
           if (!allFields) {
-            ThisPlease fieldAnnotated = member.getAnnotation(ThisPlease.class);
+            ParcelableThisPlease fieldAnnotated = member.getAnnotation(ParcelableThisPlease.class);
             if (fieldAnnotated == null) {
               // Not all fields should parcelable,
               // and this field is not annotated as parcelable, so skip this field
@@ -114,7 +114,7 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
                     + "or annotate this field as not been parcelable with @%s "
                     + "or configure this class to ignore private fields "
                     + "with @%s( ignorePrivateFields = true )", member.getSimpleName(),
-                element.getSimpleName(), NoThanks.class.getSimpleName(),
+                element.getSimpleName(), ParcelableNoThanks.class.getSimpleName(),
                 ParcelablePlease.class.getSimpleName());
           }
 
