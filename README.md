@@ -2,7 +2,6 @@
 An AnnotationProcessor for generating Android Parcelable boilerplate code. [See this blog entry](http://hannesdorfmann.com/android/ParcelablePlease/) for comparison with other parcel libraries.
 
 #Dependency
-
 Check the latest version nummber on [GradlePlease](http://gradleplease.appspot.com/#com.hannesdorfmann.parcelableplease)
 
 ```groovy
@@ -12,7 +11,6 @@ apt 'com.hannesdorfmann.parcelableplease:processor:1.0.0'
 In android studio you need to apply Hugo Visser's awesome [android-apt](https://bitbucket.org/hvisser/android-apt) gradle plugin to enable annotation processing.
 
 #How to use
-
 Simply annotate the classes you want to make Parcelable with `@ParcelablePlease` and implement the `Parcelable` as well as the `CREATOR` (This step can be automated by using the Android Studio plugin, see below).
 
 ```java
