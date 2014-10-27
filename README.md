@@ -190,4 +190,4 @@ As default `ParcelablePlease` will throw a compile error if it tries to serializ
      
 # Limitations
  - **Fields** must have at least default (package) visibility. That means private or protected fields are not supported.
- - **Private classes** are not supported because of visibilitiy issues.
+ - **Private classes** are not supported because of visibilitiy issues
