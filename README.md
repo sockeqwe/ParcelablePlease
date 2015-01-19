@@ -3,11 +3,11 @@ An AnnotationProcessor for generating Android Parcelable boilerplate code.
 
 #Dependency
 
-Check the latest version nummber on [GradlePlease](http://gradleplease.appspot.com/#com.hannesdorfmann.parcelableplease)
+Latest version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.hannesdorfmann.parcelableplease/annotation/badge.png)](https://maven-badges.herokuapp.com/maven-central/com.hannesdorfmann.parcelableplease/annotation)
 
 ```groovy
-compile 'com.hannesdorfmann.parcelableplease:annotation:1.0.0'
-apt 'com.hannesdorfmann.parcelableplease:processor:1.0.0'
+compile 'com.hannesdorfmann.parcelableplease:annotation:x.x.x'
+apt 'com.hannesdorfmann.parcelableplease:processor:x.x.x'
 ```
 In android studio you need to apply Hugo Visser's awesome [android-apt](https://bitbucket.org/hvisser/android-apt) gradle plugin to enable annotation processing.
 
@@ -177,7 +177,7 @@ You can configure which fields should be serialized. There are two ways:
  ```
  
 
-As default `ParcelablePlease` will throw a compile error if it tries to serialize private fields (private fields are not supported because of visibility issues). If your class marked with `@ParcelablePlease` contains private fields you could mark them as not pacelable with `@ParcelableNoThanks` or you could cofigure ParcelablePlease to skip private fields by using `@ParcelablePlease( ignorePrivateFields = true)`:
+As default `ParcelablePlease` will throw a compile error if it tries to serialize private fields (private fields are not supported because of visibility issues). If your class marked with `@ParcelablePlease` contains private fields you could mark them as not parcelable with `@ParcelableNoThanks` or you could cofigure ParcelablePlease to skip private fields by using `@ParcelablePlease( ignorePrivateFields = true)`:
  
  ```java
  @ParcelablePlease( ignorePrivateFields = true)
