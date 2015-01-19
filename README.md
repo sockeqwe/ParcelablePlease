@@ -1,8 +1,7 @@
 #ParcelablePlease
-An AnnotationProcessor for generating Android Parcelable boilerplate code.
+An AnnotationProcessor for generating Android Parcelable boilerplate code. [See this blog entry](http://hannesdorfmann.com/android/ParcelablePlease/) for comparison with other parcel libraries.
 
 #Dependency
-
 Latest version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.hannesdorfmann.parcelableplease/annotation/badge.png)](https://maven-badges.herokuapp.com/maven-central/com.hannesdorfmann.parcelableplease/annotation)
 
 ```groovy
@@ -12,7 +11,6 @@ apt 'com.hannesdorfmann.parcelableplease:processor:x.x.x'
 In android studio you need to apply Hugo Visser's awesome [android-apt](https://bitbucket.org/hvisser/android-apt) gradle plugin to enable annotation processing.
 
 #How to use
-
 Simply annotate the classes you want to make Parcelable with `@ParcelablePlease` and implement the `Parcelable` as well as the `CREATOR` (This step can be automated by using the Android Studio plugin, see below).
 
 ```java
@@ -192,4 +190,4 @@ As default `ParcelablePlease` will throw a compile error if it tries to serializ
      
 # Limitations
  - **Fields** must have at least default (package) visibility. That means private or protected fields are not supported.
- - **Private classes** are not supported because of visibilitiy issues.
+ - **Private classes** are not supported because of visibilitiy issues
