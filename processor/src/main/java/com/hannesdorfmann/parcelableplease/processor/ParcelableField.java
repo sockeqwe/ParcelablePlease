@@ -55,7 +55,7 @@ public class ParcelableField {
       }
 
       // Everything is fine, so use the bagger
-      codeGenerator = BaggerCodeGen.getInstance();
+      codeGenerator = new BaggerCodeGen();
     } else {
       // Not using Bagger
       CodeGenInfo res = SupportedTypes.getCodeGenInfo(element, elementUtils, typeUtils);

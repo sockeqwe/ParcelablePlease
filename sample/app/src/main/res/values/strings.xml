@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">sample</string>
+    <string name="select_fruit">Select a fruit by clicking on the button below:</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
