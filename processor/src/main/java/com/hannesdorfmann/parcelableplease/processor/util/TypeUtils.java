@@ -54,4 +54,14 @@ public class TypeUtils {
       return ""; // Default package
     }
   }
+
+  public static String getBinaryName(Elements elementUtils, TypeElement type) throws IOException {
+    String packageName = getPackageName(elementUtils, type);
+    String qualifiedName = type.getQualifiedName().toString();
+    if (packageName.length() > 0) {
+      return packageName + '.' + qualifiedName.substring(packageName.length() + 1).replace('.', '$');
+    } else {
+      return qualifiedName.replace('.', '$');
+    }
+  }
 }

@@ -46,10 +46,15 @@ public class CodeGenerator {
 
     String classSuffix = "ParcelablePlease";
     String packageName = TypeUtils.getPackageName(elementUtils, classElement);
-    String originClass = classElement.getSimpleName().toString();
+    String binaryName = TypeUtils.getBinaryName(elementUtils, classElement);
     String originFullQualifiedName = classElement.getQualifiedName().toString();
-    String className = originClass + classSuffix;
-    String qualifiedName = classElement.getQualifiedName().toString() + classSuffix;
+    String className;
+    if (packageName.length() > 0) {
+      className = binaryName.substring(packageName.length() + 1) + classSuffix;
+    } else {
+      className = binaryName + classSuffix;
+    }
+    String qualifiedName = binaryName + classSuffix;
 
     //
     // Write code
