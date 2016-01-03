@@ -11,6 +11,7 @@ import butterknife.OnClick;
 import com.hannesdorfmann.parcelableplease.sample.model.Banana;
 import com.hannesdorfmann.parcelableplease.sample.model.Fruit;
 import com.hannesdorfmann.parcelableplease.sample.model.Orange;
+import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -68,7 +69,11 @@ public class MainActivity extends ActionBarActivity {
 
   @OnClick(R.id.orange)
   public void onOrangeClicked() {
-    selectedFruit = new Orange();
+    Orange orange = new Orange();
+    orange.content = new ArrayList<>();
+    orange.content.add("First");
+    orange.content.add("Second");
+    selectedFruit = orange;
     updateUi();
   }
 

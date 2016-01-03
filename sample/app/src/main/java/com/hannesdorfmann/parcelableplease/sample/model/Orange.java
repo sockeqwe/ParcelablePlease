@@ -3,6 +3,7 @@ package com.hannesdorfmann.parcelableplease.sample.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
+import java.util.List;
 
 /**
  * @author Hannes Dorfmann
@@ -12,6 +13,8 @@ import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
   public Orange() {
     super("Orange", FruitType.C);
   }
+
+  public List<String> content;
 
   @Override public int describeContents() {
     return 0;
@@ -32,4 +35,8 @@ import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
       return new Orange[size];
     }
   };
+
+  @Override public String toString() {
+    return super.toString() + " "+content;
+  }
 }

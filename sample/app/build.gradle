@@ -20,7 +20,7 @@ android {
   }
 }
 
-def version = '1.0.1-SNAPSHOT'
+def version = '1.0.2-SNAPSHOT'
 
 dependencies {
   compile fileTree(dir: 'libs', include: ['*.jar'])

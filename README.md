@@ -50,14 +50,11 @@ Once you have done this basic setup by connecting the generated code with your M
 # Android Studio Plugin
 Like mentioned above you have to write few lines of code to connect the Parcelable class with the generated code. Don't worry, you don't have to do this by hand. There is a Android Studio / IntelliJ plugin that can do that for you:
 
- 1. Download the plugin from [here](https://github.com/sockeqwe/ParcelablePlease/raw/master/ParcelablePlease-intellij-plugin/ParcelablePlease-intellij-plugin.jar)
- 2. Open Android Studio / IntelliJ 
- 3. Open the Preferences (on Mac with `⌘ + ;` )
- 4. Type in the searchbox "plugin" to navigate quickly to the plugins section
- 5. Click on the `Intall Plugin From Disk` Button and select the downloaded plugin .jar file
- 
- ![Preferences](https://github.com/sockeqwe/ParcelablePlease/raw/master/ParcelablePlease-intellij-plugin/images/intellij-plugin.png "Preferences")
-
+ 1. Open Android Studio / IntelliJ 
+ 2. Open the Preferences (on Mac with `⌘ + ;` )
+ 3. Type in the searchbox "plugin" to navigate quickly to the plugins section
+ 4. Click on _Browse repositories..._ button
+ 5. Search for _ParcelablePlease_ and install this plugin
  6. Restart Android Studio
  7. Create a Model class and open the Generate Menu (on Mac with  ``⌘ + n` ). Note that the cursor must be somewhere in the code of the class.
  
@@ -112,6 +109,7 @@ Like mentioned above you have to write few lines of code to connect the Parcelab
      - ArrayList<? extends Parcelable>
      - LinkedList<? extends Parcelable>
      - CopyOnWriteArrayList<? extends Parcelable>
+     - List<String>
      
      
 # Bagger
