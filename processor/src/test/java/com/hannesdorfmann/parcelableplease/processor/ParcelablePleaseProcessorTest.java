@@ -75,12 +75,9 @@ public class ParcelablePleaseProcessorTest {
     JavaFileObject componentFile = JavaFileObjects.forSourceLines("test.StringListTest",
         "package test;",
         "",
-        "class StringListTest {",
         "@" + annotation,
-        "class InnerClass {",
-        "int id;",
-        "String name;" ,
-        "}",
+        "class StringListTest {",
+        "   java.util.List<String> strings;",
         "}");
 
     Truth.assertAbout(JavaSourceSubjectFactory.javaSource())

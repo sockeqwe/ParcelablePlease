@@ -6,11 +6,8 @@ import javax.tools.Diagnostic;
 
 /**
  * This is a simple static helper class to print error, waring or note messages during annotation
- * processing.
- * <p>
- * You <b>must</b> initialize this class by calling {@link #init(ProcessingEnvironment)}
- * before you can use the messaging methods
- * </p>
+ * processing. <p> You <b>must</b> initialize this class by calling {@link
+ * #init(ProcessingEnvironment)} before you can use the messaging methods </p>
  *
  * @author Hannes Dorfmann
  */

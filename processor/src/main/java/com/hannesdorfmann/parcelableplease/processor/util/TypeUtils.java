@@ -57,6 +57,7 @@ public class TypeUtils {
 
   /**
    * Get the qualified name of a class. Also respects innner classes
+   *
    * @param elementUtils Elements
    * @param type TypeElement
    * @return The qualified name of the class represented by the passed type element

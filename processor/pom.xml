@@ -67,12 +67,7 @@
             <goals>
               <goal>testCompile</goal>
             </goals>
-            <configuration>
-              <annotationProcessors>
-                <annotationProcessor>com.hannesdorfmann.fragmentargs.processor.ArgProcessor
-                </annotationProcessor>
-              </annotationProcessors>
-            </configuration>
+
           </execution>
         </executions>
       </plugin>

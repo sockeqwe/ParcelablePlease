@@ -43,7 +43,8 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
     ProcessorMessage.init(env);
   }
 
-  @Override public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
+  @Override
+  public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
 
     Element lastElement = null;
     CodeGenerator codeGenerator = new CodeGenerator(elementUtils, filer);
@@ -140,7 +141,8 @@ public class ParcelablePleaseProcessor extends AbstractProcessor {
     return true;
   }
 
-  @Override public SourceVersion getSupportedSourceVersion() {
+  @Override
+  public SourceVersion getSupportedSourceVersion() {
     return SourceVersion.latestSupported();
   }
 

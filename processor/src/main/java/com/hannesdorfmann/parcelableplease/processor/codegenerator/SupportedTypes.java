@@ -117,7 +117,7 @@ public class SupportedTypes {
    * Collect information about the element and the corresponding code generator
    */
   public static CodeGenInfo getCodeGenInfo(VariableElement element, Elements elements,
-      Types types) {
+                                           Types types) {
 
     // Special classes, primitive, wrappers, etc.
     String typeKey = element.asType().toString();
@@ -218,7 +218,6 @@ public class SupportedTypes {
     // }
 
 
-
     // Serializable as last
     if (isOfType(element, "java.io.Serializable", elements, types)) {
       return new CodeGenInfo(typeMap.get(TYPE_KEY_SERIALIZABLE));
@@ -236,14 +235,14 @@ public class SupportedTypes {
    * Get the wildcardType
    */
   public static TypeMirror getWildcardType(String type, String elementType, Elements elements,
-      Types types) {
+                                           Types types) {
     TypeElement arrayList = elements.getTypeElement(type);
     TypeMirror elType = elements.getTypeElement(elementType).asType();
     return types.getDeclaredType(arrayList, types.getWildcardType(elType, null));
   }
 
   private static boolean isOfWildCardType(Element element, String type, String wildcardtype,
-      Elements elements, Types types) {
+                                          Elements elements, Types types) {
     return types.isAssignable(element.asType(),
         getWildcardType(type, wildcardtype, elements, types));
   }
@@ -253,7 +252,7 @@ public class SupportedTypes {
   }
 
   private static boolean isOfType(TypeMirror typeMirror, String type, Elements elements,
-      Types types) {
+                                  Types types) {
     return types.isAssignable(typeMirror, elements.getTypeElement(type).asType());
   }
 
@@ -261,7 +260,7 @@ public class SupportedTypes {
    * Checks if the variabel element has generics arguments that matches the expected type
    */
   public static TypeMirror hasGenericsTypeArgumentOf(Element element, String typeToCheck,
-      Elements elements, Types types) {
+                                                     Elements elements, Types types) {
 
     if (element.asType().getKind() != TypeKind.DECLARED
         || !(element.asType() instanceof DeclaredType)) {
