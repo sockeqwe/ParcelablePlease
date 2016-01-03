@@ -8,6 +8,7 @@ import com.hannesdorfmann.parcelableplease.processor.codegenerator.android.Spars
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.AbsListCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.ParcelableArrayCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.PrimitiveArrayCodeGen;
+import com.hannesdorfmann.parcelableplease.processor.codegenerator.collection.StringListCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.other.DateCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.other.SerializeableCodeGen;
 import com.hannesdorfmann.parcelableplease.processor.codegenerator.primitives.BooleanCodeGen;
@@ -43,6 +44,7 @@ public class SupportedTypes {
   private static final String TYPE_KEY_PARCELABLE_ARRAYLIST = "Parcelable-ArrayList";
   private static final String TYPE_KEY_PARCELABLE_LINKEDLIST = "Parcelable-LinkedList";
   private static final String TYPE_KEY_PARCELABLE_LIST = "Parcelable-List";
+  private static final String TYPE_KEY_STRING_LIST = "String-List";
   private static final String TYPE_KEY_BUNDLE = "android.os.Bundle";
   private static final String TYPE_KEY_DOUBLE_ARRAY = "Array-Double";
   private static final String TYPE_KEY_FLOAT_ARRAY = "Array-Float";
@@ -88,6 +90,7 @@ public class SupportedTypes {
     // typeMap.put(TYPE_KEY_SPARSE_ARRAY, new SparseArrayCodeGen()); // TODO implement
 
     // Lists
+    typeMap.put(TYPE_KEY_STRING_LIST, new StringListCodeGen());
     typeMap.put(TYPE_KEY_PARCELABLE_LIST, new AbsListCodeGen(ArrayList.class.getName()));
     typeMap.put(TYPE_KEY_PARCELABLE_ARRAYLIST, new AbsListCodeGen(ArrayList.class.getName()));
     typeMap.put(TYPE_KEY_PARCELABLE_LINKEDLIST, new AbsListCodeGen(LinkedList.class.getName()));
@@ -150,6 +153,10 @@ public class SupportedTypes {
     if (isOfWildCardType(element, List.class.getName(), "android.os.Parcelable", elements, types)) {
       return new CodeGenInfo(typeMap.get(TYPE_KEY_PARCELABLE_LIST),
           hasGenericsTypeArgumentOf(element, "android.os.Parcelable", elements, types));
+    }
+
+    if (isOfWildCardType(element, List.class.getName(), String.class.getName(), elements, types)) {
+      return new CodeGenInfo(typeMap.get(TYPE_KEY_STRING_LIST));
     }
 
     // Arrays
