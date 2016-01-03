@@ -52,7 +52,7 @@ public class ParcelablePleaseProcessorTest {
   public void innerClass() {
 
     String annotation = ParcelablePlease.class.getCanonicalName();
-    JavaFileObject componentFile = JavaFileObjects.forSourceLines("test.SimpleClass",
+    JavaFileObject componentFile = JavaFileObjects.forSourceLines("test.OuterClass",
         "package test;",
         "",
         "class OuterClass {",
@@ -61,6 +61,26 @@ public class ParcelablePleaseProcessorTest {
             "int id;",
             "String name;" ,
             "}",
+        "}");
+
+    Truth.assertAbout(JavaSourceSubjectFactory.javaSource())
+        .that(componentFile).processedWith(new ParcelablePleaseProcessor())
+        .compilesWithoutError();
+  }
+
+  @Test
+  public void stringList() {
+
+    String annotation = ParcelablePlease.class.getCanonicalName();
+    JavaFileObject componentFile = JavaFileObjects.forSourceLines("test.StringListTest",
+        "package test;",
+        "",
+        "class StringListTest {",
+        "@" + annotation,
+        "class InnerClass {",
+        "int id;",
+        "String name;" ,
+        "}",
         "}");
 
     Truth.assertAbout(JavaSourceSubjectFactory.javaSource())
