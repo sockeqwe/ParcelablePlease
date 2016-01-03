@@ -55,6 +55,13 @@ public class TypeUtils {
     }
   }
 
+  /**
+   * Get the qualified name of a class. Also respects innner classes
+   * @param elementUtils Elements
+   * @param type TypeElement
+   * @return The qualified name of the class represented by the passed type element
+   * @throws IOException
+   */
   public static String getBinaryName(Elements elementUtils, TypeElement type) throws IOException {
     String packageName = getPackageName(elementUtils, type);
     String qualifiedName = type.getQualifiedName().toString();
