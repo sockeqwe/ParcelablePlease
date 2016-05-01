@@ -1,5 +1,5 @@
 #ParcelablePlease
-An AnnotationProcessor for generating Android Parcelable boilerplate code. [See this blog entry](http://hannesdorfmann.com/android/ParcelablePlease/) for comparison with other parcel libraries.
+An AnnotationProcessor for generating Android Parcelable boilerplate code. [See this blog entry](http://hannesdorfmann.com/android/ParcelablePlease) for comparison with other parcel libraries.
 
 #Dependency
 Latest version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.hannesdorfmann.parcelableplease/annotation/badge.png)](https://maven-badges.herokuapp.com/maven-central/com.hannesdorfmann.parcelableplease/annotation)
