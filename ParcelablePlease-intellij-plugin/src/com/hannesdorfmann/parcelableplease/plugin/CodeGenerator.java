@@ -63,7 +63,7 @@ public class CodeGenerator {
   private String generateCreator() {
 
     String className = psiClass.getName();
-    String parcelablePleaseClass = className + PARCELABLE_PLEASE_SUFFIX;
+    String parcelablePleaseClass = getParcelablePleaseClassName();
 
     StringBuilder sb = new StringBuilder("public static final android.os.Parcelable.Creator<");
     sb.append(className)
@@ -92,8 +92,7 @@ public class CodeGenerator {
 
   private String generateWriteToParcel() {
 
-    String className = psiClass.getName();
-    String parcelablePleaseClass = className + PARCELABLE_PLEASE_SUFFIX;
+    String parcelablePleaseClass = getParcelablePleaseClassName();
 
     StringBuilder sb = new StringBuilder(
         "@Override public void writeToParcel(android.os.Parcel dest, int flags) {");
@@ -250,5 +249,20 @@ public class CodeGenerator {
     if (implementsList != null) {
       styleManager.shortenClassReferences(implementsList.add(implementsReference));
     }
+  }
+
+  private String getParcelablePleaseClassName() {
+    String className = psiClass.getName();
+    StringBuilder classNameBuilder = new StringBuilder();
+    classNameBuilder.append(className);
+    classNameBuilder.append(PARCELABLE_PLEASE_SUFFIX);
+    PsiClass containingClass = psiClass.getContainingClass();
+    while (containingClass != null) {
+      classNameBuilder.insert(0, '$');
+      classNameBuilder.insert(0, containingClass.getName());
+      containingClass = containingClass.getContainingClass();
+    }
+
+    return classNameBuilder.toString();
   }
 }
