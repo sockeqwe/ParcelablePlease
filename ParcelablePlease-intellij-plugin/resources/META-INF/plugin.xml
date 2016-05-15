@@ -1,0 +1,50 @@
+<idea-plugin version="2">
+  <id>com.hannesdorfmann.parcelableplease.plugin</id>
+  <name>ParcelablePlease</name>
+  <version>1.0.2</version>
+  <vendor url="http://www.hannesdorfmann.com">Hannes Dorfmann</vendor>
+
+  <description><![CDATA[
+      Generates code for ParcelablePlease.
+      See <a href="https://github.com/sockeqwe/ParcelablePlease">ParcelablePlease on github</a>
+    ]]></description>
+
+  <change-notes><![CDATA[
+      ]]>
+  </change-notes>
+
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+  <idea-version since-build="135.1"/>
+
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <depends>com.intellij.modules.java</depends>
+  <depends optional="true">com.intellij.modules.androidstudio</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+
+  <project-components>
+    <!-- Add your project components here -->
+  </project-components>
+
+  <actions>
+    <!-- Add your actions here -->
+    <action id="generateParcelablePlease"
+        class="com.hannesdorfmann.parcelableplease.plugin.ParcelablePleaseAction"
+        text="ParcelablePlease"
+        description="Generates the code for Parcelable and ParcelablePlease">
+      <add-to-group group-id="GenerateGroup" anchor="last"/>
+    </action>
+  </actions>
+
+</idea-plugin>
