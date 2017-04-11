@@ -1,7 +1,7 @@
-#ParcelablePlease
+# ParcelablePlease
 An AnnotationProcessor for generating Android Parcelable boilerplate code. [See this blog entry](http://hannesdorfmann.com/android/ParcelablePlease) for comparison with other parcel libraries.
 
-#Dependency
+# Dependency
 Latest version: [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.hannesdorfmann.parcelableplease/annotation/badge.png)](https://maven-badges.herokuapp.com/maven-central/com.hannesdorfmann.parcelableplease/annotation)
 
 ```groovy
@@ -10,7 +10,7 @@ apt 'com.hannesdorfmann.parcelableplease:processor:x.x.x'
 ```
 In android studio you need to apply Hugo Visser's awesome [android-apt](https://bitbucket.org/hvisser/android-apt) gradle plugin to enable annotation processing.
 
-#How to use
+# How to use
 Simply annotate the classes you want to make Parcelable with `@ParcelablePlease` and implement the `Parcelable` as well as the `CREATOR` (This step can be automated by using the Android Studio plugin, see below).
 
 ```java
